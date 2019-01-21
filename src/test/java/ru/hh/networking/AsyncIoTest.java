@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings({"Duplicates", "AnonymousInnerClassMayBeStatic", "AnonymousInnerClassWithTooManyMethods"})
@@ -28,6 +29,7 @@ public class AsyncIoTest {
   public void ddosAsyncServer() throws IOException, InterruptedException {
     int port = 5656;
     AtomicInteger idGenerator = new AtomicInteger();
+    AtomicInteger successRequests = new AtomicInteger();
 
     int nThreads = 10;
     AsynchronousChannelGroup group = AsynchronousChannelGroup.withFixedThreadPool(nThreads, new ThreadFactory() {
@@ -64,6 +66,7 @@ public class AsyncIoTest {
               System.out.println(prefix + " is processing task " + taskId + " for " + SINGLE_TASK_DURATION + " millis");
 
               // TODO: mimic some business
+              // and increment success requests counter
 
               System.out.println(prefix + " finished task " + taskId);
             } catch (IOException e) { // TODO: line can be modified
@@ -92,6 +95,7 @@ public class AsyncIoTest {
     }
     latch.await(15, TimeUnit.SECONDS);
     assertTrue(throwableHolder.get() instanceof InterruptedByTimeoutException);
+    assertEquals(successRequests.get(), nThreads);
     assc.close();
     group.shutdown();
   }
