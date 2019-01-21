@@ -34,7 +34,7 @@ public class IoTest {
             System.out.println("exception:" + e.getMessage());
           }
         }
-      } catch (IOException e) { // TODO: line can be removed
+      } catch (IOException e) { // TODO: line can be modified
         e.printStackTrace();
       }
     });
